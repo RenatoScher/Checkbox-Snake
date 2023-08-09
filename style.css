@@ -1,0 +1,30 @@
+:root {
+    --buttonSize: 4.66%; /*4.66%*/
+}
+
+body {
+    display: grid;
+    place-items: center;
+}
+
+main {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    background-color: gainsboro;
+    width: 600px;
+    height: 600px;
+}
+
+main input {
+    height: var(--buttonSize); width: var(--buttonSize);
+    accent-color: rgb(0, 145, 255);
+}
+
+#apple {
+    accent-color: red;
+}
+
+#head {
+    accent-color: blue;
+}
