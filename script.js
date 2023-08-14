@@ -9,10 +9,14 @@ let plr = {
 };
 
 let gameStarted = false;
+let gamePaused = false;
+let totalTime = 0;
 const tableSize = 17; //17
-const tick = 140;
+const tickDelay = 100; //100
 const board = document.getElementsByTagName("main")[0];
-const button = document.getElementById("iteraction");
+const startButton = document.getElementById("startIteraction");
+const pauseButton = document.getElementById("pauseIteraction");
+const stats = document.getElementById("stats");
 console.log(board);
 
 for (let i = 0; i < tableSize; i++) {
@@ -35,7 +39,7 @@ for (let i = 0; i < tableSize; i++) {
 
 let hasMoved = true;
 
-document.addEventListener('keyup', function (e) {
+document.addEventListener('keydown', function (e) {
     if (hasMoved == false) {return;}
 
 
@@ -65,6 +69,21 @@ document.addEventListener('keyup', function (e) {
     }
 })
 
+function Tick() {
+    if (gamePaused) {return;}
+
+    move();
+    drawPlr();
+
+    totalTime += tickDelay / 1000;
+
+    let minutes = Math.floor((Math.floor(totalTime/60) / 100 - Math.floor(Math.floor(totalTime/60) / 100)) * 10).toString() + ((Math.floor(totalTime/60) / 10 - Math.floor(Math.floor(totalTime/60) / 10)) * 10).toString();
+    let seconds = (Math.floor((totalTime/100 - Math.floor(totalTime/100))*10) % 6).toString() + (Math.floor((totalTime/10 - Math.floor(totalTime/10))*10)).toString();
+    let ms = Math.floor((totalTime - Math.floor(totalTime))*10).toString();
+
+    stats.getElementsByTagName('p')[1].innerText = "Tempo percorrido: " + minutes + ":" + seconds + "." + ms;
+    stats.getElementsByTagName('p')[2].innerText = "HC: [" + plr.headCoordinate + "]";
+}
 
 function getBox(Cd) {
     return board.children[(Cd[0]) + (Cd[1] * tableSize)];
@@ -114,11 +133,12 @@ function move() {
     }
 
     hasMoved = true
-    drawPlr();
 }
 
 
 function spawnApple() {
+    stats.getElementsByTagName('p')[0].innerText = "Tamanho da Minhoca: " + (plr.bodyCoordinates.length + 1);
+
     let randomCd;
 
     while (true) {
@@ -145,6 +165,8 @@ function death() {
         return;
     }
     gameStarted = false;
+    clearInterval(interval);
+    interval = null;
 
     let blink = false;
 
@@ -162,9 +184,10 @@ function death() {
 
 
 let interval;
-function buttonPressed() {
+function startButtonPressed() {
     if (gameStarted) {
         gameStarted = false;
+        startButton.innerText = "Começar";
         console.log("stop");
         clearInterval(interval);
         interval = null;
@@ -173,6 +196,10 @@ function buttonPressed() {
 
         clearInterval(deathInterval);
         deathInterval = null;
+
+        stats.getElementsByTagName('p')[0].innerText = "Tamanho da Minhoca: " + (plr.bodyCoordinates.length + 1);
+        totalTime = 0;
+
 
         for (i of board.children) {
             i.checked = false;
@@ -196,14 +223,27 @@ function buttonPressed() {
 
         console.log("start");
         gameStarted = true;
+        gamePaused = false;
+        startButton.innerText = "Parar";
+        pauseButton.innerText = "Pausar";
         if (!interval) {
-            interval = setInterval(function () {
-                move()
-            }, tick);
+            interval = setInterval(Tick, tickDelay);
         }
 
     }
 }
 
+
+function pauseButtonPressed() {
+    if (gamePaused) {
+        gamePaused = false;
+        pauseButton.innerText = "Pausar";
+    } else {
+        gamePaused = true;
+        pauseButton.innerText = "Retomar";
+    }
+}
+
 drawPlr();
-button.addEventListener('click', buttonPressed);
+startButton.addEventListener('click', startButtonPressed);
+pauseButton.addEventListener('click', pauseButtonPressed);

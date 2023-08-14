@@ -28,3 +28,8 @@ main input {
 #head {
     accent-color: blue;
 }
+
+#stats {
+    position: absolute;
+    left: 150px;
+}
