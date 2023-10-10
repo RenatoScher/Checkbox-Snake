@@ -1,10 +1,15 @@
 :root {
-    --buttonSize: 4.66%; /*4.66%*/
+    --buttonSize: 27.96px; /*4.66%*/
 }
 
 body {
     display: grid;
     place-items: center;
+    max-width: 100vw;
+}
+
+h3, h4 {
+    text-align: center;
 }
 
 main {
@@ -18,18 +23,18 @@ main {
 
 main input {
     height: var(--buttonSize); width: var(--buttonSize);
-    accent-color: rgb(0, 145, 255);
 }
 
 #apple {
     accent-color: red;
 }
 
-#head {
-    accent-color: blue;
-}
-
 #stats {
     position: absolute;
     left: 150px;
+    top: 200px;
+}
+
+#stats > input {
+    width: 200px;
 }

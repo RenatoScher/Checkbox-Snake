@@ -12,10 +12,22 @@
     </h1>
 
     <div id="stats">
-        <h3>Estatisticas</h3>
+        <h3>Estatísticas</h3>
         <p>Tamanho da minhoca: 3</p>
         <p>Tempo percorrido: 00:00.0</p>
         <p>HC: [4,7]</p>
+
+        <label for="startAtX">PosX Inicial:</label> <label for="startAtY">PosY Inicial</label> <br>
+        <input type="range" id="startAtX" name="startAtX" value="4" min="0" max="16" oninput="this.nextElementSibling.value = this.value">
+        <output>4</output> <br>
+
+        <input type="range" id="startAtY" name="startAtY" value="7" min="0" max="16" oninput="this.nextElementSibling.value = this.value">
+        <output>7</output> <br>
+
+
+        <label for="startAt">Tamanho Inicial:</label> <br>
+        <input type="range" id="startAt" min="1" max="256" value="3" oninput="this.nextElementSibling.value = this.value">
+        <output>3</output> <br>
     
         <button id="startIteraction">
             Começar
@@ -28,6 +40,28 @@
     <main>
 
     </main>
+
+    <div id="customize">
+        <h3>Customização</h3>
+        <div>
+            <h4>Cabeça</h4>
+            <label for="HeadR">R</label>
+            <input type="number" name="HeadR" value="0" min="0" max="255">
+            <label for="HeadG">G</label>
+            <input type="number" name="HeadG" value="0" min="0" max="255">
+            <label for="HeadB">B</label>
+            <input type="number" name="HeadB" value="0" min="0" max="255">
+        </div>
+        <div>
+            <h4>Rabo</h4>
+            <label for="BodyR">R</label>
+            <input type="number" name="BodyR" value="255" min="0" max="255">
+            <label for="BodyG">G</label>
+            <input type="number" name="BodyG" value="255" min="0" max="255">
+            <label for="BodyB">B</label>
+            <input type="number" name="BodyB" value="255" min="0" max="255">
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>

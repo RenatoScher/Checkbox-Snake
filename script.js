@@ -1,11 +1,12 @@
 let plr = {
     headCoordinate: [4, 7],
-    bodyCoordinates: [
-        [3, 7],
-        [2, 7],
-    ],
+    bodyCoordinates: [],
     direction: 1,
     move: 0,
+};
+
+let modifiers = {
+
 };
 
 let gameStarted = false;
@@ -17,6 +18,8 @@ const board = document.getElementsByTagName("main")[0];
 const startButton = document.getElementById("startIteraction");
 const pauseButton = document.getElementById("pauseIteraction");
 const stats = document.getElementById("stats");
+const customize = document.getElementById('customize');
+let degrade = [[0, 0, 0], [0, 0, 255]];
 console.log(board);
 
 for (let i = 0; i < tableSize; i++) {
@@ -93,9 +96,35 @@ function getBox(Cd) {
 function drawPlr() {
     getBox(plr.headCoordinate).checked = true;
     getBox(plr.headCoordinate).id = "head";
+    getBox(plr.headCoordinate).style.accentColor = "rgb(" + degrade[0][0] + ", " + degrade[0][1]+ ", " + degrade[0][2] + ")";
+
+    let percentX = (degrade[1][0] - degrade[0][0]) / plr.bodyCoordinates.length;
+    let percentY = (degrade[1][1] - degrade[0][1]) / plr.bodyCoordinates.length;
+    let percentZ = (degrade[1][2] - degrade[0][2]) / plr.bodyCoordinates.length;
 
     for (let i = 0; i < plr.bodyCoordinates.length; i++) {
+        getBox(plr.bodyCoordinates[i]).style.accentColor = "rgb(" + (degrade[0][0] + percentX * (i + 1)).toString() + ", " + (degrade[0][1] + percentY * (i + 1)).toString() + ", " + (degrade[0][2] + percentZ * (i + 1)).toString() + ")";
         getBox(plr.bodyCoordinates[i]).checked = true;
+
+        console.log("rgb(" + (degrade[0][0] + percentX * (i + 1)) + ", " + (degrade[0][1] + percentY * (i + 1)) + ", " + (degrade[0][2] + percentZ * (i + 1)) + ")");
+    }
+}
+
+
+function updateColors() {
+    degrade[0][0] = parseInt(customize.querySelectorAll('input')[0].value);
+    degrade[0][1] = parseInt(customize.querySelectorAll('input')[1].value);
+    degrade[0][2] = parseInt(customize.querySelectorAll('input')[2].value);
+    degrade[1][0] = parseInt(customize.querySelectorAll('input')[3].value);
+    degrade[1][1] = parseInt(customize.querySelectorAll('input')[4].value);
+    degrade[1][2] = parseInt(customize.querySelectorAll('input')[5].value);
+
+    for (const e in degrade) {
+        for (const e2 in degrade[e]) {
+            if (isNaN(degrade[e][e2])) {
+                degrade[e][e2] = 0;
+            }
+        }
     }
 }
 
@@ -114,7 +143,8 @@ function move() {
     tocomsono[plr.direction] += plr.move;
     if (getBox(tocomsono).checked == true && getBox(tocomsono).id != "apple") {death(); return;}
 
-    getBox(plr.headCoordinate).id = null;
+    getBox(plr.headCoordinate).removeAttribute('id');
+    getBox(plr.headCoordinate).removeAttribute('style');
 
     let oldHeadCd = [];
     oldHeadCd[0] = plr.headCoordinate[0];
@@ -127,7 +157,8 @@ function move() {
     if (getBox(plr.headCoordinate).id != "apple") {
         let popped = plr.bodyCoordinates.pop();
         getBox(popped).checked = false;
-        getBox(popped).id = null;
+        getBox(popped).removeAttribute('id');
+        getBox(popped).removeAttribute('style');
     } else {
         spawnApple();
     }
@@ -168,6 +199,8 @@ function death() {
     clearInterval(interval);
     interval = null;
 
+    customize.removeAttribute('style');
+
     let blink = false;
 
     if (!deathInterval) {
@@ -192,6 +225,8 @@ function startButtonPressed() {
         clearInterval(interval);
         interval = null;
 
+        customize.removeAttribute('style');
+
     } else {
 
         clearInterval(deathInterval);
@@ -203,21 +238,41 @@ function startButtonPressed() {
 
         for (i of board.children) {
             i.checked = false;
-            i.id = "";
+            i.removeAttribute('id');
+            i.removeAttribute('style');
         }
+
+        const plrInputs = stats.getElementsByTagName("input");
         plr = {
             size: 3,
-            headCoordinate: [4, 7],
-            bodyCoordinates: [
-                [3, 7],
-                [2, 7],
-            ],
+            headCoordinate: [Number(plrInputs[0].value), Number(plrInputs[1].value)],
+            bodyCoordinates: [],
             direction: 0,
             move: 1,
         };
 
         getBox([12, 7]).id = "apple";
         getBox([12, 7]).checked = true;
+
+        for (let i = 0; i < Number(plrInputs[2].value - 1); i++) {
+            let head = [];
+            head[0] = plr.headCoordinate[0];
+            head[1] = plr.headCoordinate[1];
+
+            if (head[0] - 1 >= 0) {
+                plr.bodyCoordinates.push([head[0] - 1, head[1]])
+            } else if (head[1] + 1 < tableSize) {
+                plr.bodyCoordinates.push([head[0], head[1] + 1])
+            } else if (head[1] + 1 > tableSize) {
+                plr.bodyCoordinates.push([head[0], head[1] + 1])
+            }
+        }
+
+
+        customize.style.display = 'none';
+
+
+        updateColors();
         drawPlr();
 
 
@@ -238,9 +293,11 @@ function pauseButtonPressed() {
     if (gamePaused) {
         gamePaused = false;
         pauseButton.innerText = "Pausar";
+        customize.style.display = "none";
     } else {
         gamePaused = true;
         pauseButton.innerText = "Retomar";
+        customize.removeAttribute('style');
     }
 }
 
